@@ -1,3 +1,5 @@
+mysql -u b56d54d3d6a97b -h us-cdbr-iron-east-03.cleardb.net -p heroku_7726d67b54ebae9 < sql.sql
+
 <?php
     include("conexao.php");
     $query = "SELECT clientes.id_cliente, clientes.nome_cliente FROM clientes ORDER by clientes.id_cliente";
