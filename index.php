@@ -1,5 +1,5 @@
 <?php
-    require("conexao.php");
+    include("conexao.php");
     $query = "SELECT clientes.id_cliente, clientes.nome_cliente FROM clientes ORDER by clientes.id_cliente";
     $result = $mysqli->query($query);        
     $cliente = $result->fetch_all(MYSQLI_ASSOC);
