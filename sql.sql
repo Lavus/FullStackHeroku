@@ -142,38 +142,38 @@ INSERT INTO `pedido` (`id_pedido`, `id_produto_pedido`, `id_cliente_pedido`, `pr
 --
 -- Triggers `pedido`
 --
-DROP TRIGGER IF EXISTS `validate_insert_pedido`;
-DELIMITER $$
-CREATE TRIGGER `validate_insert_pedido` BEFORE INSERT ON `pedido` FOR EACH ROW BEGIN
-    DECLARE preco_produto Float;
-    DECLARE quantidade_produto INT;
-    SET preco_produto = (SELECT produtos.preco_unitario_produto FROM produtos WHERE produtos.id_produto = NEW.id_produto_pedido);
-    SET quantidade_produto = (SELECT produtos.multiplo_produto FROM produtos WHERE produtos.id_produto = NEW.id_produto_pedido);
-    IF (NEW.preco_unitario_pedido < (preco_produto*0.9)) THEN
-        SET NEW.preco_unitario_pedido = NULL;
-    END IF;
-    IF ((SELECT MOD(NEW.quantidade_pedido, quantidade_produto)) != 0) THEN
-        SET NEW.quantidade_pedido = NULL;
-    END IF;
-END
-$$
-DELIMITER ;
-DROP TRIGGER IF EXISTS `validate_update_pedido`;
-DELIMITER $$
-CREATE TRIGGER `validate_update_pedido` BEFORE UPDATE ON `pedido` FOR EACH ROW BEGIN
-    DECLARE preco_produto Float;
-    DECLARE quantidade_produto INT;
-    SET preco_produto = (SELECT produtos.preco_unitario_produto FROM produtos WHERE produtos.id_produto = NEW.id_produto_pedido);
-    SET quantidade_produto = (SELECT produtos.multiplo_produto FROM produtos WHERE produtos.id_produto = NEW.id_produto_pedido);
-    IF (NEW.preco_unitario_pedido < (preco_produto*0.9)) THEN
-        SET NEW.preco_unitario_pedido = NULL;
-    END IF;
-    IF ((SELECT MOD(NEW.quantidade_pedido, quantidade_produto)) != 0) THEN
-        SET NEW.quantidade_pedido = NULL;
-    END IF;
-END
-$$
-DELIMITER ;
+-- ~ DROP TRIGGER IF EXISTS `validate_insert_pedido`;
+-- ~ DELIMITER $$
+-- ~ CREATE TRIGGER `validate_insert_pedido` BEFORE INSERT ON `pedido` FOR EACH ROW BEGIN
+    -- ~ DECLARE preco_produto Float;
+    -- ~ DECLARE quantidade_produto INT;
+    -- ~ SET preco_produto = (SELECT produtos.preco_unitario_produto FROM produtos WHERE produtos.id_produto = NEW.id_produto_pedido);
+    -- ~ SET quantidade_produto = (SELECT produtos.multiplo_produto FROM produtos WHERE produtos.id_produto = NEW.id_produto_pedido);
+    -- ~ IF (NEW.preco_unitario_pedido < (preco_produto*0.9)) THEN
+        -- ~ SET NEW.preco_unitario_pedido = NULL;
+    -- ~ END IF;
+    -- ~ IF ((SELECT MOD(NEW.quantidade_pedido, quantidade_produto)) != 0) THEN
+        -- ~ SET NEW.quantidade_pedido = NULL;
+    -- ~ END IF;
+-- ~ END
+-- ~ $$
+-- ~ DELIMITER ;
+-- ~ DROP TRIGGER IF EXISTS `validate_update_pedido`;
+-- ~ DELIMITER $$
+-- ~ CREATE TRIGGER `validate_update_pedido` BEFORE UPDATE ON `pedido` FOR EACH ROW BEGIN
+    -- ~ DECLARE preco_produto Float;
+    -- ~ DECLARE quantidade_produto INT;
+    -- ~ SET preco_produto = (SELECT produtos.preco_unitario_produto FROM produtos WHERE produtos.id_produto = NEW.id_produto_pedido);
+    -- ~ SET quantidade_produto = (SELECT produtos.multiplo_produto FROM produtos WHERE produtos.id_produto = NEW.id_produto_pedido);
+    -- ~ IF (NEW.preco_unitario_pedido < (preco_produto*0.9)) THEN
+        -- ~ SET NEW.preco_unitario_pedido = NULL;
+    -- ~ END IF;
+    -- ~ IF ((SELECT MOD(NEW.quantidade_pedido, quantidade_produto)) != 0) THEN
+        -- ~ SET NEW.quantidade_pedido = NULL;
+    -- ~ END IF;
+-- ~ END
+-- ~ $$
+-- ~ DELIMITER ;
 
 -- --------------------------------------------------------
 
