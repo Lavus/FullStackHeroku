@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `pedido` (
   `id_cliente_pedido` int(11) NOT NULL,
   `preco_unitario_pedido` float NOT NULL,
   `quantidade_pedido` int(11) NOT NULL,
-  `tempo_pedido` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `tempo_pedido` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_pedido`),
   KEY `fk_produto_pedido` (`id_produto_pedido`),
   KEY `fk_cliente_pedido` (`id_cliente_pedido`)
