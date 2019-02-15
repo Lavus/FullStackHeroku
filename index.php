@@ -42,13 +42,12 @@ var alter_order_id = "";
             
             var xhttp;    
             if (dados == "") {
-                document.getElementById("txtHint").innerHTML = "";
                 return;
             }
             xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("txtHint").innerHTML = this.responseText;
+                    showCustomer(document.getElementById("cliente").value)
                 }
             };
             xhttp.open("GET", "cadastro_pedido.php?"+dados, true);
@@ -71,7 +70,7 @@ var alter_order_id = "";
                 </tr>
                 <tr>
                     <td>                    
-                        <select name='cliente' required="required" onchange="showCustomer(this.value)">
+                        <select id="cliente" name='cliente' required="required" onchange="showCustomer(this.value)">
                             <option value="">Selecione um cliente:</option>
                             <?php
                                 for ($contador = 0; $contador < count($cliente); $contador++) {
