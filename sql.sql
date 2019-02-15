@@ -21,8 +21,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `fullstack`
 --
-CREATE DATABASE IF NOT EXISTS `fullstack` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `fullstack`;
+-- ~ CREATE DATABASE IF NOT EXISTS `fullstack` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+-- ~ USE `fullstack`;
 
 -- --------------------------------------------------------
 
