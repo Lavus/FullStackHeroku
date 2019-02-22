@@ -1,254 +1,127 @@
-<?php
-    include("conexao.php");
+<?php # indentificação que o codigo a partir deste ponto serás PHP
+    include("conexao.php"); # inclui o que está escrito em conexão.php
     $query = "SELECT clientes.id_cliente, clientes.nome_cliente FROM clientes ORDER by clientes.id_cliente";
-    $result = $mysqli->query($query);        
-    $cliente = $result->fetch_all(MYSQLI_ASSOC);
-    $query = "SELECT produtos.id_produto, produtos.nome_produto, produtos.preco_unitario_produto, produtos.multiplo_produto FROM produtos ORDER by produtos.id_produto";
-    $result = $mysqli->query($query);        
-    $produto = $result->fetch_all(MYSQLI_ASSOC);
-?>
-<script type="text/javascript">
-var produto = <?php echo json_encode($produto) ?>;
-var backup_inner = "";
-var backup_inner_id = "";
-var alter_order_id = "";
-//~ alert( produto[6]['preco_unitario_produto'] );
-</script>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <style>
-            table, td, th {
-                border: 1px solid black;
-            }
-            td {
-                text-align:center;
-            }
-        </style>
-        <script>
-        $(document).ready(function(){
-          $('#cadastro_pedido').submit(function(ev){
-            //~ alert(document.getElementById("rentabilidade").style.backgroundColor);
-            if (document.getElementById("rentabilidade").style.backgroundColor == 'red'){
-                alert("Não é permitido cadastrar pedidos com a rentabilidade ruim \n por favor aumente o preço se deseja cadastrar o pedido");
-                document.getElementById("price").focus();
-                return false;
-            }
-            ev.preventDefault();
-            //~ alert("Submitted");
-            var dados = $('#cadastro_pedido').serialize();
-            //~ alert(dados);
-            
-            var xhttp;    
-            if (dados == "") {
-                return;
-            }
-            xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    showCustomer(document.getElementById("cliente").value)
-                }
-            };
-            xhttp.open("GET", "cadastro_pedido.php?"+dados, true);
-            xhttp.send();
-          });
-        });
-        </script>
-        <title>Full Stack</title>
-    </head>
-    <body>
-        <form id="cadastro_pedido" action="" method="GET">
-            <table style="width:100%;">
-                <tr>
-                    <th>Nome do cliente</th>
-                    <th>Nome do produto</th>
-                    <th>Preço unitario</th>
-                    <th>Rentabilidade do pedido</th>
-                    <th>Quantidade de produtos</th>
-                    <th>Concluir pedido</th>
-                </tr>
-                <tr>
-                    <td>                    
-                        <select id="cliente" name='cliente' required="required" onchange="showCustomer(this.value)">
-                            <option value="">Selecione um cliente:</option>
-                            <?php
-                                for ($contador = 0; $contador < count($cliente); $contador++) {
-                                    printf ("<option value='%d'>%s</option>", $cliente[$contador]['id_cliente'], $cliente[$contador]['nome_cliente']);
-                                }
-                            ?>
-                        </select> 
-                    </td>
-                    <td>
-                        <select id='product' name='produto' required="required" onchange="showprice(this.value,'')">
-                            <option value="">Selecione um produto:</option>
-                            <?php
-                                $contador = 0;
-                                while( $contador < count($produto)){
-                                    printf ("<option value='%d'>%s</option>", $produto[$contador]["id_produto"], $produto[$contador]["nome_produto"]);
-                                    $contador++;
-                                }
-                            ?>
-                        </select> 
-                    </td>
-                    <td>
-                        <input id="price" required="required" type="number" step=0.01 name="preco" min="0.01" value="0.01" onkeyup="showrentability(this.value,'')" onchange="showrentability(this.value,'')">
-                    </td>
-                    <td>
-                        <div id="rentabilidade">
-                            Rentabilidade ...
-                        </div>
-                    </td>
-                    <td>
-                        <input type="number" step=1 id="amount" required="required" min="1" name="quantidade" value="1">
-                    </td>
-                    <td>
-                        <input type="submit" value="Submit">
-                    </td>
-                </tr>
-            </table> 
-        </form> 
-        <form id='altera_pedido'>
-            <div id="txtHint">Informações dos pedidos do cliente selecionado serão mostradas aqui ...</div>
-            <input type="submit" style="visibility:hidden" value="Submit">
-        </form>
-        <script>
-            function alter_table(int) {
-                if ((backup_inner != "") && (backup_inner_id != "")){
-                    document.getElementById(backup_inner_id).innerHTML = backup_inner;
-                }
-                var id = "txt"+int;
-                backup_inner_id = id;
-                backup_inner = document.getElementById(id).innerHTML;
-                var xhttp;
-                xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        document.getElementById(id).innerHTML = this.responseText;
-                    }
-                };
-                xhttp.open("GET", "change_table.php?pedido="+int, true);
-                xhttp.send();
-            }
-            function alter_order(int) {
-                alter_order_id = int;
-            }
-            function exclude_order(int) {
-                if (confirm('Tem certeza que quer excluir este pedido?')) {
-                    //~ alert("yes");
-                    var id = "txt"+int;
-                    var xhttp;    
-                    xhttp = new XMLHttpRequest();
-                    xhttp.onreadystatechange = function() {
-                        if (this.readyState == 4 && this.status == 200) {
-                            document.getElementById(id).style.visibility = "collapse";;
-                            alert(this.responseText);
-                            backup_inner = "";
-                            backup_inner_id = "";
-                        }
-                    };
-                    var pedido = "pedido="+int;
-                    //~ alert("exclude_order.php?"+pedido);
-                    xhttp.open("GET", "exclude_order.php?"+pedido, true);
-                    xhttp.send();
-                } else {
-                    //~ alert("no");
-                    return false;
-                }
+	# armazena a consulta ao banco de dados na variavel $query.
+	# consulta dos clientes na tabela clientes
+	
+    $result = $mysqli->query($query); # executa a consulta e armazena o resultado na variavel $result
+    $cliente = $result->fetch_all(MYSQLI_ASSOC); # pega todos os valores e armazena em $cliente
 
-            }
-            function showCustomer(int) {
-                var xhttp;    
-                if (int == "") {
-                    document.getElementById("txtHint").innerHTML = "";
-                    return;
-                }
-                xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        document.getElementById("txtHint").innerHTML = this.responseText;
-                        backup_inner = "";
-                        backup_inner_id = "";
-                    }
-                };
-                xhttp.open("GET", "get_pedido.php?cliente="+int, true);
-                xhttp.send();
-            }
-            function showprice(int,txt) {
-                int = int-1
-                //~ alert(txt);
-                //~ alert(produto[int]['preco_unitario_produto']);
-                //~ alert($('#price').val());
-                document.getElementById("price"+txt).value = (produto[int]['preco_unitario_produto']*1.01);
-                document.getElementById("amount"+txt).value = (produto[int]['multiplo_produto']);
-                document.getElementById("amount"+txt).step = (produto[int]['multiplo_produto']);
-                document.getElementById("amount"+txt).min = (produto[int]['multiplo_produto']);
-                showrentability(document.getElementById("price"+txt).value,txt)
-            }
-            function showrentability(str,txt) {
-                //~ alert(txt);
-                if (str.length == 0) {
-                    document.getElementById("rentabilidade"+txt).innerHTML = "Rentabilidade do pedido serás mostrado aqui ...";
-                    return;
-                }
-                else {
-                    //~ alert (str);
-                    var index_produto = (document.getElementById("product"+txt).value)-1;
-                    var preco = produto[index_produto]['preco_unitario_produto'];
-                    //~ alert (preco);
-                    if ( parseFloat(str) > parseFloat(preco) ){
-                        document.getElementById("rentabilidade"+txt).innerHTML = "Ôtima";
-                        document.getElementById("rentabilidade"+txt).style.backgroundColor = "";
-                        //~ alert("otimo");
-                    }
-                    else{
-                        if ( parseFloat(str) >= parseFloat(preco*0.9) ){
-                            document.getElementById("rentabilidade"+txt).innerHTML = "Boa";
-                            document.getElementById("rentabilidade"+txt).style.backgroundColor = "";
-                            //~ alert("bom");
-                        }
-                        else{
-                            document.getElementById("rentabilidade"+txt).innerHTML = "Ruim";
-                            document.getElementById("rentabilidade"+txt).style.backgroundColor = "red";
-                            //~ alert(document.getElementById("rentabilidade"+txt).style.backgroundColor);
-                            //~ alert("ruim");
-                        }
-                    }
-                }
-            }
-            $("#altera_pedido").submit(function(e){
-                if (document.getElementById("rentabilidade"+alter_order_id).style.backgroundColor == 'red'){
-                    alert("Não é permitido atualizar pedidos se a rentabilidade estiver ruim \n por favor aumente o preço se deseja atualizar o pedido");
-                    document.getElementById("price"+alter_order_id).focus();
-                    return false;
-                }
-                //~ alert(alter_order_id);
-                e.preventDefault();
-                if (confirm('Tem certeza que quer alterar este pedido?')) {
-                    //~ alert("yes");
-                    var id = "txt"+alter_order_id;
-                    var xhttp;    
-                    xhttp = new XMLHttpRequest();
-                    xhttp.onreadystatechange = function() {
-                        if (this.readyState == 4 && this.status == 200) {
-                            document.getElementById(id).innerHTML = this.responseText;
-                            backup_inner = "";
-                            backup_inner_id = "";
-                        }
-                    };
-                    var pedido = "pedido="+alter_order_id;
-                    var produto = "produto="+document.getElementById('product'+alter_order_id).value;
-                    var preco = "preco="+document.getElementById('price'+alter_order_id).value;
-                    var quantidade = "quantidade="+document.getElementById('amount'+alter_order_id).value;
-                    //~ alert("alter_order.php?"+pedido+"&"+produto+"&"+preco+"&"+quantidade);
-                    xhttp.open("GET", "alter_order.php?"+pedido+"&"+produto+"&"+preco+"&"+quantidade, true);
-                    xhttp.send();
-                } else {
-                    //~ alert("no");
-                    return false;
-                }
+	$query = "SELECT produtos.id_produto, produtos.nome_produto, produtos.preco_unitario_produto, produtos.multiplo_produto FROM produtos ORDER by produtos.id_produto";
+ 	# armazena a consulta ao banco de dados na variavel $query.
+	# consulta dos produtos na tabela produtos
+	
+    $result = $mysqli->query($query); # executa a consulta e armazena o resultado na variavel $result
+    $produto = $result->fetch_all(MYSQLI_ASSOC); # pega todos os valores e armazena em $produto
+?>  <!-- indentificação que acabou o codigo em PHP -->
+<html> <!-- indentificação de abertura do codigo HTML -->
+    <head> <!-- indentificação de abertura do cabeçalho do codigo -->
+        <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- indentificação do tipo do codigo -->
+        <link rel="stylesheet" type="text/css" href="CSS/content.css"> <!-- indentificação de onde está o css do codigo -->
+        <script src="JS/jquery.min.js"></script> <!-- indentificação de onde está o js do codigo -->
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> <!-- indentificação do tipo do codigo -->
+		<script type="text/javascript"> <!-- indentificação de abertura do codigo js(javascript) -->
+			var produto = <?php echo json_encode($produto) ?>;  <!-- criação de uma variavel produto que recebe os valores armazenados na variavel $produto em php da consulta executada no começo do codigo -->
+			var backup_inner = ""; <!-- criação de uma variavel backup_inner para armazenar conteudo de pagina alterada -->
+			var backup_inner_id = ""; <!-- criação de uma variavel backup_inner_id para armazenar o id do conteudo de pagina alterada -->
+			var order_id = ""; <!-- criação de uma variavel order_id para armazenar o id da chamada de função -->
+			var type_change = ""; <!-- criação de uma variavel type_change para armazenar qual tipo de função foi chamada -->
+			//~ alert( produto[6]['preco_unitario_produto'] );  <!-- um alert para debug, verificar oque mostra -->
+		</script> <!-- indentificação do fechamento do codigo js(javascript) -->
+        <script>
+			$.getScript( "JS/content.js", function( data, textStatus, jqxhr ) {
+				console.log( data ); // Data returned
+				console.log( textStatus ); // Success
+				console.log( jqxhr.status ); // 200
+				console.log( "Load was performed." );
+			});
+        </script> <!-- indentificação de onde está o js do codigo -->
+        <title>Full Stack</title> <!-- indentificação do titulo da pagina -->
+    </head> <!-- indentificação do fechamento do cabeçalho do codigo -->
+    <body> <!-- indentificação de abertura do corpo do codigo -->
+        <form id="cadastro_pedido" action="" method="GET"> <!-- indentificação de abertura de um form -->
+            <table>  <!-- indentificação de abertura de uma tabela -->
+				<thead> <!-- indentificação de abertura de uma thead na tabela -->
+					<tr> <!-- indentificação de abertura de uma linha dentro da thead -->
+						<th>Nome do cliente</th> <!-- cria uma coluna na linha para servir como cabeçalho da tabela -->
+						<th>Nome do produto</th> <!-- cria uma coluna na linha para servir como cabeçalho da tabela -->
+						<th>Preço unitario</th> <!-- cria uma coluna na linha para servir como cabeçalho da tabela -->
+						<th>Rentabilidade do pedido</th> <!-- cria uma coluna na linha para servir como cabeçalho da tabela -->
+						<th>Quantidade de produtos</th> <!-- cria uma coluna na linha para servir como cabeçalho da tabela -->
+						<th>Preço total do pedido</th> <!-- cria uma coluna na linha para servir como cabeçalho da tabela -->
+						<th>Concluir pedido</th> <!-- cria uma coluna na linha para servir como cabeçalho da tabela -->
+					</tr> <!-- indentificação do fechamento da linha -->
+				</thead> <!-- indentificação do fechamento da thead -->
+				<tbody> <!-- indentificação de abertura de um tbody -->
+					<tr> <!-- indentificação de abertura de uma linha dentro do tbody -->
+						<td data-label="Nome do cliente"> <!-- indentificação de abertura de uma coluna dentro da linha com uma label -->
+							<select id="cliente" name='cliente' required="required" onchange="showCustomer(this.value,0)"> <!-- indentificação de abertura de um selecionador -->
+								<option value="">Selecione um cliente:</option> <!-- indentificação de uma das opções do selecionador -->
+								<?php # indentificação que o codigo a partir deste ponto serás PHP
+									for ($contador = 0; $contador < count($cliente); $contador++) { # começa um repetidor até o contador chegar na quantidade dos clientes
+										printf ("<option value='%d'>%s</option>", $cliente[$contador]['id_cliente'], $cliente[$contador]['nome_cliente']); # mostra a indentificação de uma das opções do selecionador baseado no contador
+									} # final do repetidor
+								?> <!-- indentificação que acabou o codigo em PHP -->
+							</select> <!-- indentificação do fechamento do selecionador -->
+						</td> <!-- indentificação do fechamento da coluna -->
+						<td data-label="Nome do produto"> <!-- indentificação de abertura de uma coluna dentro da linha com uma label -->
+							<select id='product' name='produto' required="required" onchange="showprice(this.value,'')"> <!-- indentificação de abertura de um selecionador -->
+								<option value="">Selecione um produto:</option> <!-- indentificação de uma das opções do selecionador -->
+								<?php # indentificação que o codigo a partir deste ponto serás PHP
+									$contador = 0; # cria a variavel para o repetidor
+									while( $contador < count($produto)){ # começa um repetidor até o contador chegar na quantidade dos produtos
+										printf ("<option value='%d'>%s</option>", $produto[$contador]["id_produto"], $produto[$contador]["nome_produto"]); # mostra a indentificação de uma das opções do selecionador baseado no contador
+										$contador++; # incrementa o contador em 1, resumindo de 1 vai para 2, 2 para 3 e ...
+									} # final do repetidor
+								?> <!-- indentificação que acabou o codigo em PHP -->
+							</select> <!-- indentificação do fechamento do selecionador -->
+						</td> <!-- indentificação do fechamento da coluna -->
+						<td data-label="Preço unitario"> <!-- indentificação de abertura de uma coluna dentro da linha com uma label -->
+							<input id="price" required="required" type="number" step=0.01 name="preco" min="0.01" value="0.01" onkeyup="showrentability(this.value,'')" onchange="showrentability(this.value,'')"> <!-- indentificação de um campo de escrita de numeros para o preço -->
+						</td> <!-- indentificação do fechamento da coluna -->
+						<td data-label="Rentabilidade do pedido"> <!-- indentificação de abertura de uma coluna dentro da linha com uma label -->
+							<div id="rentabilidade"> <!-- cria um encapsulamente de conteudo div para calcular a rentabilidade, um conteudo dinamico -->
+								Rentabilidade ... <!-- somente um aviso que a rentabilidade serás carregado naquela posição -->
+							</div> <!-- fecha o encapsulamente div -->
+						</td> <!-- indentificação do fechamento da coluna -->
+						<td data-label="Quantidade de produtos"> <!-- indentificação de abertura de uma coluna dentro da linha com uma label -->
+							<input type="number" step=1 id="amount" required="required" min="1" name="quantidade" value="1" onkeyup="verify_total('')" onchange="verify_total('')"> <!-- indentificação de um campo de escrita de numeros para quantidade -->
+						</td> <!-- indentificação do fechamento da coluna -->
+						<td data-label="Preço total do pedido" id="total_price"> <!-- indentificação de abertura de uma coluna dentro da linha com uma label e um id -->
+							0.01 <!-- valor total do pedido -->
+						</td> <!-- indentificação do fechamento da coluna -->
+						<td data-label="Concluir pedido"> <!-- indentificação de abertura de uma coluna dentro da linha com uma label -->
+							<input type="submit" value="Submit" onsubmit="return false"> <!-- indentificação de um botão submit -->
+						</td> <!-- indentificação do fechamento da coluna -->
+					</tr> <!-- indentificação do fechamento da linha -->
+				</tbody> <!-- indentificação do fechamento do tbody -->
+            </table> <!-- indentificação do fechamento da tabela -->
+        </form> <!-- indentificação do fechamento do form -->
 
-            });
-        </script>
-    </body>
-</html>
+        <!-- The Modal -->
+		<div id="myModal" class="modal"> <!-- cria um encapsulamente de conteudo div para servir de modal -->
+			<!-- Modal content -->
+			<div class="modal-content"> <!-- cria um encapsulamente de conteudo div para separar o conteudo do modal -->
+				<div class="modal-header"> <!-- cria um encapsulamente de conteudo div para separar o cabeçalho do modal -->
+					<span class="close">&times;</span> <!-- criação de um botão para fechar o modal -->
+					<h2 id="modal_title_check">Modal Header</h2> <!-- criação um titulo para o cabeçalho dinamico, com um exemplo de titulo -->
+				</div> <!-- fecha o encapsulamente div -->
+				<div class="modal-body" id="modal_body_check"> <!-- cria um encapsulamente de conteudo div para separar o corpo do modal dinamico -->
+					<p>Some text in the Modal Body</p> <!-- somente um exemplo de conteudo -->
+					<p>Some other text...</p> <!-- somente um exemplo de conteudo -->
+				</div> <!-- fecha o encapsulamente div -->
+				<div class="modal-footer" id="modal_footer_check"> <!-- cria um encapsulamente de conteudo div para separar o acabamento do modal dinamico -->
+					<h3>Modal Footer</h3> <!-- somente um exemplo de conteudo -->
+				</div> <!-- fecha o encapsulamente div -->
+			</div> <!-- fecha o encapsulamente div -->
+		</div> <!-- fecha o encapsulamente div -->
+
+        <form id='altera_pedido'> <!-- indentificação de abertura de um form com um id -->
+			<div style='text-align: center;'> <!-- cria um encapsulamente de conteudo div para alinhar os objetos dentro -->
+				<div id="txtHint"> <!-- cria um encapsulamente de conteudo div para servir de contedudo dinamico -->
+					<H2>As informações dos pedidos referente ao cliente selecionado serão mostradas aqui ...</H2> <!-- somente um aviso que o conteudo serás carregado naquela posição -->
+				</div> <!-- fecha o encapsulamente div -->
+			</div> <!-- fecha o encapsulamente div -->
+        </form> <!-- indentificação do fechamento do form -->
+    </body> <!-- indentificação do fechamento do corpo -->
+</html> <!-- indentificação do fechamento do conteudo HTML -->
